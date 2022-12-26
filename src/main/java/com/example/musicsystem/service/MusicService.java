@@ -21,4 +21,6 @@ public interface MusicService {
     ActionResponse mediaStatusNext(ActionRequest req);
 
     ActionResponse typeToPlay(ActionRequest req);
+
+    ActionResponse songGenere(ActionRequest req);
 }

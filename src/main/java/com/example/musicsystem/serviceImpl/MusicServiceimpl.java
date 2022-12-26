@@ -68,64 +68,339 @@ public class MusicServiceimpl implements MusicService {
             resp.add("Hello " + globalEntity.getUserName() + ", What Music Artist you want to listen?")
                     .addSuggestions(new String[]{"Arijit sigh", "Martin Garrix", "Imagine Dragons"})
                     .add(new LinkOutSuggestion().setDestinationName("Artist Name").setUrl(linkoutSuggestions));
-        } else if (Objects.equals(req.getParameter("optionFlag"), "genere") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
+        } else if (Objects.equals(req.getParameter("optionFlag"), "Genere") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
+            globalEntity.setPlayTypeFlag(true);
             resp.add("Hello " + globalEntity.getUserName() + ", What Music Genre you want to listen?")
-                    .addSuggestions(new String[]{"Pop", "Rock", "Hip Hop"})
-                    .add(new LinkOutSuggestion().setDestinationName("Genre").setUrl(linkoutSuggestions));
+                    .addSuggestions(new String[]{"pop", "rock", "romantic", "random"})
+                    .add(new LinkOutSuggestion().setDestinationName("Genere").setUrl(linkoutSuggestions));
+        }
+        return resp.build();
+    }
+
+    @Override
+    public ActionResponse songGenere(ActionRequest req) {
+
+        List<MusicEntity> rocks = new ArrayList<>();
+        rocks.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3",
+                "Rock on", imgUrl, "Rock on"));
+
+        rocks.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Sadda+Haq+Full+Video+Song+Rockstar++Ranbir+Kapoor.mp3",
+                "Sadda Haq", imgUrl, "Sadda Haq"));
+
+        List<MusicEntity> pops = new ArrayList<>();
+        pops.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/KK+-+Yaaron.mp3",
+                "Yaaron", imgUrl, "Yaaron"));
+        pops.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/O+Sanam+-+Sunoh++Lucky+Ali++(Official+Video).mp3",
+                "O Sama", imgUrl, "Channa Mereya"));
+
+        List<MusicEntity> romantics = new ArrayList();
+        romantics.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Kesariya+-+Brahm%C4%81stra++Ranbir+Kapoor++Alia+Bhatt++Pritam++Arijit+Singh++Amitabh+Bhattacharya.mp3",
+                "Kesariya", imgUrl, "Kesariya"));
+        romantics.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Imagine+Dragons+-+Thunder.mp3",
+                "Martin Garrix", imgUrl, "Martin Garrix"));
+        List<MusicEntity> randoms = new ArrayList<>();
+        randoms.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3",
+                "Rock on", imgUrl, "Rock on"));
+        randoms.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Sadda+Haq+Full+Video+Song+Rockstar++Ranbir+Kapoor.mp3",
+                "Sadda Haq", imgUrl, "Ranbir Kapoor"));
+
+        randoms.add(new MusicEntity(3,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/KK+-+Yaaron.mp3",
+                "Yaaron", imgUrl, "Yaaron"));
+        randoms.add(new MusicEntity(4,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/O+Sanam+-+Sunoh++Lucky+Ali++(Official+Video).mp3",
+                "O Sama", imgUrl, "Channa Mereya"));
+
+        randoms.add(new MusicEntity(5,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Kesariya+-+Brahm%C4%81stra++Ranbir+Kapoor++Alia+Bhatt++Pritam++Arijit+Singh++Amitabh+Bhattacharya.mp3",
+                "Kesariya", imgUrl, "Arijit Sigh"));
+
+        randoms.add(new MusicEntity(6,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Martin+Garrix+-+Animals+(Official+Video).mp3",
+                "Martin Garrix", imgUrl, "Martin Garrix"));
+        randoms.add(new MusicEntity(7,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Imagine+Dragons+-+Thunder.mp3",
+                "Imagine Dragons", imgUrl, "Imagine Dragons"));
+
+        LOGGER.info("option flag : {}", req.getParameter("songGenere"));
+        ResponseBuilder resp = new ResponseBuilder();
+        if (Objects.equals(req.getParameter("songGenere"), "pop")) {
+            int num = (int) (Math.random() * (1 - (pops.size() == 0 ? 1 : pops.size())));
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            pops.forEach(pop -> {
+                if (pop.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(pop.getSong_name())
+                                                            .setDescription(pop.getArtist_name())
+                                                            .setContentUrl(pop.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
+        }
+        else if (Objects.equals(req.getParameter("songGenere"), "random")) {
+            int num = (int) (Math.random() * randoms.size());
+            LOGGER.info("Random number: {}", num);
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            randoms.forEach(random -> {
+                if (random.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(random.getSong_name())
+                                                            .setDescription(random.getArtist_name())
+                                                            .setContentUrl(random.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
+        }
+        else if (Objects.equals(req.getParameter("songGenere"), "rock")) {
+            int num = (int) (Math.random() * (1 - (randoms.size() == 0 ? 1 : rocks.size())));
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            rocks.forEach(rock -> {
+                if (rock.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(rock.getSong_name())
+                                                            .setDescription(rock.getArtist_name())
+                                                            .setContentUrl(rock.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
+        }
+        else if (Objects.equals(req.getParameter("songGenere"), "romantic")) {
+            int num = (int) (Math.random() * (1 - (romantics.size() == 0 ? 1 : romantics.size())));
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            romantics.forEach(romantic -> {
+                if (romantic.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(romantic.getSong_name())
+                                                            .setDescription(romantic.getArtist_name())
+                                                            .setContentUrl(romantic.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
         }
         return resp.build();
     }
 
     @Override
     public ActionResponse playSong(ActionRequest req) {
-
-//        JSONArray rock = new JSONArray();
-//        rock.put(new MusicEntity(1,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3",
-//                "Rock on", imgUrl, "Rock on"));
-//
-//        rock.put(new MusicEntity(2,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Sadda+Haq+Full+Video+Song+Rockstar++Ranbir+Kapoor.mp3",
-//                "Sadda Haq", imgUrl, "Sadda Haq"));
-//
-//        JSONArray pop = new JSONArray();
-//        pop.put(new MusicEntity(1,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/KK+-+Yaaron.mp3",
-//                "Yaaron", imgUrl, "Yaaron"));
-//        pop.put(new MusicEntity(2,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/O+Sanam+-+Sunoh++Lucky+Ali++(Official+Video).mp3",
-//                "O Sama", imgUrl, "Channa Mereya"));
-//
-//        JSONArray romantic = new JSONArray();
-//        romantic.put(new MusicEntity(1,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Kesariya+-+Brahm%C4%81stra++Ranbir+Kapoor++Alia+Bhatt++Pritam++Arijit+Singh++Amitabh+Bhattacharya.mp3",
-//                "Kesariya", imgUrl, "Kesariya"));
-//        romantic.put(new MusicEntity(2,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Imagine+Dragons+-+Thunder.mp3",
-//                "Martin Garrix", imgUrl, "Martin Garrix"));
-//        JSONArray random = new JSONArray();
-//        random.put(new MusicEntity(1,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3",
-//                "Rock on", imgUrl, "Rock on"));
-//        random.put(new MusicEntity(2,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Sadda+Haq+Full+Video+Song+Rockstar++Ranbir+Kapoor.mp3",
-//                "Sadda Haq", imgUrl, "Sadda Haq"));
-//
-//        random.put(new MusicEntity(3,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/KK+-+Yaaron.mp3",
-//                "Yaaron", imgUrl, "Yaaron"));
-//        random.put(new MusicEntity(4,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/O+Sanam+-+Sunoh++Lucky+Ali++(Official+Video).mp3",
-//                "O Sama", imgUrl, "Channa Mereya"));
-//
-//        random.put(new MusicEntity(5,
-//                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Kesariya+-+Brahm%C4%81stra++Ranbir+Kapoor++Alia+Bhatt++Pritam++Arijit+Singh++Amitabh+Bhattacharya.mp3",
-//                "Kesariya", imgUrl, "Kesariya"));
-//
-//        LOGGER.info("Random: {}", new Gson().toJson(random));
         ResponseBuilder resp = new ResponseBuilder();
         LOGGER.info("play songs : {}", req.getParameter("artistName"));
         LOGGER.info("play song : {}", req.getAppRequest());
+        List<MusicEntity> rocks = new ArrayList<>();
+        rocks.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3",
+                "Rock on", imgUrl, "Rock on"));
+
+        rocks.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Sadda+Haq+Full+Video+Song+Rockstar++Ranbir+Kapoor.mp3",
+                "Sadda Haq", imgUrl, "Sadda Haq"));
+
+        List<MusicEntity> pops = new ArrayList<>();
+        pops.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/KK+-+Yaaron.mp3",
+                "Yaaron", imgUrl, "Yaaron"));
+        pops.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/O+Sanam+-+Sunoh++Lucky+Ali++(Official+Video).mp3",
+                "O Sama", imgUrl, "Channa Mereya"));
+
+        List<MusicEntity> romantics = new ArrayList();
+        romantics.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Kesariya+-+Brahm%C4%81stra++Ranbir+Kapoor++Alia+Bhatt++Pritam++Arijit+Singh++Amitabh+Bhattacharya.mp3",
+                "Kesariya", imgUrl, "Kesariya"));
+        romantics.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Imagine+Dragons+-+Thunder.mp3",
+                "Martin Garrix", imgUrl, "Martin Garrix"));
+        List<MusicEntity> randoms = new ArrayList<>();
+        randoms.add(new MusicEntity(1,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3",
+                "Rock on", imgUrl, "Rock on"));
+        randoms.add(new MusicEntity(2,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Sadda+Haq+Full+Video+Song+Rockstar++Ranbir+Kapoor.mp3",
+                "Sadda Haq", imgUrl, "Ranbir Kapoor"));
+
+        randoms.add(new MusicEntity(3,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/KK+-+Yaaron.mp3",
+                "Yaaron", imgUrl, "Yaaron"));
+        randoms.add(new MusicEntity(4,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/O+Sanam+-+Sunoh++Lucky+Ali++(Official+Video).mp3",
+                "O Sama", imgUrl, "Channa Mereya"));
+
+        randoms.add(new MusicEntity(5,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Kesariya+-+Brahm%C4%81stra++Ranbir+Kapoor++Alia+Bhatt++Pritam++Arijit+Singh++Amitabh+Bhattacharya.mp3",
+                "Kesariya", imgUrl, "Arijit Sigh"));
+
+        randoms.add(new MusicEntity(6,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Martin+Garrix+-+Animals+(Official+Video).mp3",
+                "Martin Garrix", imgUrl, "Martin Garrix"));
+        randoms.add(new MusicEntity(7,
+                "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Imagine+Dragons+-+Thunder.mp3",
+                "Imagine Dragons", imgUrl, "Imagine Dragons"));
+
+        LOGGER.info("option flag : {}", req.getParameter("songGenere"));
+        if (Objects.equals(req.getParameter("songGenere"), "pop")) {
+            int num = (int) (Math.random() * (1 - (pops.size() == 0 ? 1 : pops.size())));
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            pops.forEach(pop -> {
+                if (pop.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(pop.getSong_name())
+                                                            .setDescription(pop.getArtist_name())
+                                                            .setContentUrl(pop.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
+        }
+        else if (Objects.equals(req.getParameter("songGenere"), "random")) {
+            int num = (int) (Math.random() * randoms.size());
+            LOGGER.info("Random number: {}", num);
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            randoms.forEach(random -> {
+                if (random.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(random.getSong_name())
+                                                            .setDescription(random.getArtist_name())
+                                                            .setContentUrl(random.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
+        }
+        else if (Objects.equals(req.getParameter("songGenere"), "rock")) {
+            int num = (int) (Math.random() * (1 - (randoms.size() == 0 ? 1 : rocks.size())));
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            rocks.forEach(rock -> {
+                if (rock.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(rock.getSong_name())
+                                                            .setDescription(rock.getArtist_name())
+                                                            .setContentUrl(rock.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
+        }
+        else if (Objects.equals(req.getParameter("songGenere"), "romantic")) {
+            int num = (int) (Math.random() * (1 - (romantics.size() == 0 ? 1 : romantics.size())));
+            if (num == 0) {
+                num = 1;
+            }
+            LOGGER.info("Random number: {}", num);
+            int finalNum = num;
+            romantics.forEach(romantic -> {
+                if (romantic.getId() == finalNum) {
+                    resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                    resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
+                    resp.add(
+                            new MediaResponse()
+                                    .setMediaObjects(
+                                            Collections.singletonList(
+                                                    new MediaObject()
+                                                            .setName(romantic.getSong_name())
+                                                            .setDescription(romantic.getArtist_name())
+                                                            .setContentUrl(romantic.getAudio_link())
+                                                            .setIcon(new Image()
+                                                                    .setUrl(imgUrl)
+                                                                    .setAccessibilityText("Album cover of an ocean view"))))
+                                    .setMediaType("AUDIO"));
+                }
+            });
+        }
         if (req.getParameter("artistName") != null) {
             if (Objects.equals(req.getParameter("artistName"), "Arijit sigh")) {
                 resp.add("Playing " + req.getParameter("artistName") + " song");
@@ -145,7 +420,6 @@ public class MusicServiceimpl implements MusicService {
                                                                         .setAccessibilityText(
                                                                                 "Album cover of an ocean view"))))
                                 .setMediaType("AUDIO"));
-                resp.add("The Song has been Complete Say next to Continue.");
 
             } else if (Objects.equals(req.getParameter("artistName"), "MArtin Garrix")) {
                 resp.add("Playing " + req.getParameter("artistName") + " song");
@@ -267,13 +541,16 @@ public class MusicServiceimpl implements MusicService {
         ResourceBundle rb = ResourceBundle.getBundle("resources");
         String[] artistNames = {"Arijit sigh", "MArtin Garrix", "Imagine Dragons"};
         Boolean artistNameFlag = globalEntity.getArtistNameFlag();
-        if (!Arrays.asList(artistNames).contains(artistName) && Boolean.TRUE.equals(artistNameFlag)) {
+        if (!Arrays.asList(artistNames).contains(artistName) && Boolean.TRUE.equals(artistNameFlag) && !globalEntity.getPlayTypeFlag()) {
             LOGGER.info("artistNameFlag: {}", artistNameFlag);
             String exampleSsml = rb.getString("notFoundArtist");
             SimpleResponse ssmlResp = new SimpleResponse().setSsml(exampleSsml);
             resp.add(ssmlResp).addSuggestions(artistNames)
                     .add(new LinkOutSuggestion().setDestinationName("Artist Name").setUrl(linkoutSuggestions));
-            ;
+        } else if(globalEntity.getPlayTypeFlag()) {
+            resp.add("Not Found Select Below from genere")
+                    .addSuggestions(new String[]{"pop", "rock", "romantic", "random"})
+                    .add(new LinkOutSuggestion().setDestinationName("Genere").setUrl(linkoutSuggestions));
         } else {
             ResourceBundle rd = ResourceBundle.getBundle("resources");
             resp.add(rd.getString("fallback"));

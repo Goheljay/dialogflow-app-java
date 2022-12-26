@@ -44,7 +44,16 @@ public class MusicApplication extends DialogflowApp {
         return resp;
     }
 
-    @ForIntent("Play song")
+    @ForIntent("Song Genere")
+    public ActionResponse songGenre(ActionRequest req) {
+        LOGGER.info("play song intent start");
+        LOGGER.info("Request : {}", new Gson().toJson(req));
+        ActionResponse resp = musicService.songGenere(req);
+        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        return resp;
+    }
+
+    @ForIntent("Play Song")
     public  ActionResponse playSong(ActionRequest req) {
         LOGGER.info("welcome Song Start");
         LOGGER.info("Request : {}", new Gson().toJson(req));
@@ -55,6 +64,14 @@ public class MusicApplication extends DialogflowApp {
 
     @ForIntent("Media Status")
     public ActionResponse mediaStatus(ActionRequest req) {
+        LOGGER.info("Play Status");
+        LOGGER.info("Request : {}", new Gson().toJson(req));
+        ActionResponse resp = musicService.mediaStatus(req);
+        return resp;
+    }
+
+    @ForIntent("Song Genere Status")
+    public ActionResponse GenereMediaStatus(ActionRequest req) {
         LOGGER.info("Play Status");
         LOGGER.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.mediaStatus(req);
