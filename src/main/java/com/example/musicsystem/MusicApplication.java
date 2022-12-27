@@ -1,5 +1,6 @@
 package com.example.musicsystem;
 
+import com.example.musicsystem.entity.GlobalEntity;
 import com.example.musicsystem.service.MusicService;
 import com.example.musicsystem.serviceImpl.MusicServiceimpl;
 import com.google.actions.api.*;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class MusicApplication extends DialogflowApp {
+    GlobalEntity globalEntity = new GlobalEntity();
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicApplication.class);
 
     private static final MusicService musicService = new MusicServiceimpl();
@@ -39,16 +41,21 @@ public class MusicApplication extends DialogflowApp {
     public ActionResponse typeToPlay(ActionRequest req) {
         LOGGER.info("type to play intent start");
         LOGGER.info("Request : {}", new Gson().toJson(req));
-        ActionResponse resp = musicService.typeToPlay(req);
+        globalEntity.setPaginationOneFlag(true);
+        ActionResponse resp = musicService.typeToPlay(req, globalEntity);
         LOGGER.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
-
-    @ForIntent("Song Genere")
-    public ActionResponse songGenre(ActionRequest req) {
-        LOGGER.info("play song intent start");
+    @ForIntent("play song second")
+    public ActionResponse playSecondSong(ActionRequest req) {
+        LOGGER.info("play second song intent start");
         LOGGER.info("Request : {}", new Gson().toJson(req));
-        ActionResponse resp = musicService.songGenere(req);
+        if (!globalEntity.getPaginationTwoFlag()){
+            globalEntity.setPaginationTwoFlag(true);
+        } else  {
+            globalEntity.setPaginationThreeFlag(true);
+        }
+        ActionResponse resp = musicService.typeToPlay(req,globalEntity);
         LOGGER.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
@@ -64,14 +71,6 @@ public class MusicApplication extends DialogflowApp {
 
     @ForIntent("Media Status")
     public ActionResponse mediaStatus(ActionRequest req) {
-        LOGGER.info("Play Status");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
-        ActionResponse resp = musicService.mediaStatus(req);
-        return resp;
-    }
-
-    @ForIntent("Song Genere Status")
-    public ActionResponse GenereMediaStatus(ActionRequest req) {
         LOGGER.info("Play Status");
         LOGGER.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.mediaStatus(req);

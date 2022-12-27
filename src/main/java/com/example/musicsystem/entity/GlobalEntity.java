@@ -6,14 +6,59 @@ public class GlobalEntity {
     private String userName;
     private Boolean userFlag = false;
     private Boolean artistNameFlag = false;
-    private Boolean playTypeFlag = false;
+    private Boolean playGenereFlag = false;
+    private  Boolean selectedWay = false;
+    private Boolean optionFlag = false;
+    private Boolean paginationOneFlag = false;
+    private Boolean paginationTwoFlag = false;
+    private Boolean paginationThreeFlag = false;
 
-    public Boolean getPlayTypeFlag() {
-        return playTypeFlag;
+    public Boolean getPaginationOneFlag() {
+        return paginationOneFlag;
     }
 
-    public void setPlayTypeFlag(Boolean playTypeFlag) {
-        this.playTypeFlag = playTypeFlag;
+    public void setPaginationOneFlag(Boolean paginationOneFlag) {
+        this.paginationOneFlag = paginationOneFlag;
+    }
+
+    public Boolean getPaginationTwoFlag() {
+        return paginationTwoFlag;
+    }
+
+    public void setPaginationTwoFlag(Boolean paginationTwoFlag) {
+        this.paginationTwoFlag = paginationTwoFlag;
+    }
+
+    public Boolean getPaginationThreeFlag() {
+        return paginationThreeFlag;
+    }
+
+    public void setPaginationThreeFlag(Boolean paginationThreeFlag) {
+        this.paginationThreeFlag = paginationThreeFlag;
+    }
+
+    public Boolean getOptionFlag() {
+        return optionFlag;
+    }
+
+    public void setOptionFlag(Boolean optionFlag) {
+        this.optionFlag = optionFlag;
+    }
+
+    public Boolean getSelectedWay() {
+        return selectedWay;
+    }
+
+    public void setSelectedWay(Boolean selectedWay) {
+        this.selectedWay = selectedWay;
+    }
+
+    public Boolean getPlayGenereFlag() {
+        return playGenereFlag;
+    }
+
+    public void setPlayGenereFlag(Boolean playGenereFlag) {
+        this.playGenereFlag = playGenereFlag;
     }
 
     public String getUserName() {
@@ -40,11 +85,12 @@ public class GlobalEntity {
         this.artistNameFlag = artistNameFlag;
     }
 
-    public GlobalEntity(String userName, Boolean userFlag, Boolean artistNameFlag, Boolean playTypeFlag) {
+    public GlobalEntity(String userName, Boolean userFlag, Boolean artistNameFlag, Boolean playGenereFlag, Boolean selectedWay) {
         this.userName = userName;
         this.userFlag = userFlag;
         this.artistNameFlag = artistNameFlag;
-        this.playTypeFlag = playTypeFlag;
+        this.playGenereFlag = playGenereFlag;
+        this.selectedWay = selectedWay;
     }
 
     public GlobalEntity() {
