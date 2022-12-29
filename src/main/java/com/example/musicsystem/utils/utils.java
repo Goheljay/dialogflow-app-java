@@ -75,7 +75,13 @@ public class utils {
     }
 
     public String convertSSMLSpeech (String speech){
-        String newSpeech = speech.replace("@", "<break time='1s' strength='weak'/>");
+        String newSpeech = speech.replace("@", "<break time='0.5s' strength='weak'/>");
+        return "<speak>" + newSpeech + "</speak>";
+    }
+
+    public String convertSSMLSpeech (String speech, double breakTime, String name){
+        String speechContent = speech.replace("#", name);
+        String newSpeech = speechContent.replace("@", "<break time='" + breakTime + "s' strength='weak'/>");
         return "<speak>" + newSpeech + "</speak>";
     }
 }

@@ -9,11 +9,9 @@ public interface MusicService {
 
     ActionResponse fallBack(ActionRequest req);
 
-    ActionResponse askName(ActionRequest req);
+    ActionResponse askName(ActionRequest req, GlobalEntity entity);
 
     ActionResponse playSong(ActionRequest req);
-
-    ActionResponse yesResponse(ActionRequest req);
 
     ActionResponse noResponse(ActionRequest req);
 
@@ -22,4 +20,9 @@ public interface MusicService {
     ActionResponse mediaStatusNext(ActionRequest req);
 
     ActionResponse typeToPlay(ActionRequest req, GlobalEntity entity);
+
+    ActionResponse noReviewResponse(ActionRequest req);
+
+    ActionResponse yesReviewResponse(ActionRequest req);
+
 }

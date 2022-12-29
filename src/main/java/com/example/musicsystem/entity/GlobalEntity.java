@@ -12,6 +12,15 @@ public class GlobalEntity {
     private Boolean paginationOneFlag = false;
     private Boolean paginationTwoFlag = false;
     private Boolean paginationThreeFlag = false;
+    private Boolean repeatFlag = false;
+
+    public Boolean getRepeatFlag() {
+        return repeatFlag;
+    }
+
+    public void setRepeatFlag(Boolean repeatFlag) {
+        this.repeatFlag = repeatFlag;
+    }
 
     public Boolean getPaginationOneFlag() {
         return paginationOneFlag;

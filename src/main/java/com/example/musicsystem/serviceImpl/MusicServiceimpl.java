@@ -11,6 +11,8 @@ import com.google.actions.api.ActionResponse;
 import com.google.actions.api.Capability;
 import com.google.actions.api.response.ResponseBuilder;
 import com.google.api.services.actions_fulfillment.v2.model.*;
+import com.google.gson.internal.LinkedTreeMap;
+import org.omg.CORBA.Object;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +32,13 @@ public class MusicServiceimpl implements MusicService {
         ResponseBuilder resp = new ResponseBuilder();
         ResourceBundle rd = ResourceBundle.getBundle("resources");
         globalEntity.setUserFlag(true);
-        globalEntity.setSelectedWay(true);
         resp.add(rd.getString("welcome"));
+        globalEntity.setSelectedWay(true);
         return resp.build();
     }
 
     @Override
-    public ActionResponse askName(ActionRequest req) {
+    public ActionResponse askName(ActionRequest req, GlobalEntity entity) {
         ResponseBuilder resp = new ResponseBuilder();
         if (!req.hasCapability(Capability.SCREEN_OUTPUT.getValue())) {
             return resp
@@ -44,14 +46,23 @@ public class MusicServiceimpl implements MusicService {
                     .add("Which response would you like to see next?")
                     .build();
         }
-        if (globalEntity.getUserFlag()) {
-            LOGGER.info("Person : {}", req.getParameter("given-name"));
-            globalEntity.setUserName((String) req.getParameter("given-name"));
+        LOGGER.info("person :{} ",globalEntity.getUserFlag());
+        LOGGER.info("Person : {}", req.getParameter("given-name"));
+        if (globalEntity.getUserFlag() || entity.getUserFlag()) {
+            globalEntity.setSelectedWay(true);
+            LOGGER.info("Person : {}", req.getRawText());
             globalEntity.setArtistNameFlag(true);
-            resp.add("Hello " + globalEntity.getUserName() + ", What way to play music?")
-                    .addSuggestions(new String[]{"Typing", "Options", "Genre"})
-                    .add(new LinkOutSuggestion().setDestinationName("Google Assistant").setUrl(linkoutSuggestions));
-            globalEntity.setPaginationOneFlag(true);
+            globalEntity.setUserName((String) req.getParameter("given-name"));
+            if (globalEntity.getUserName() != null) {
+                resp.add("Hello " + globalEntity.getUserName() + ", What way to play music?")
+                        .addSuggestions(new String[]{"Typing", "Options", "Genre"})
+                        .add(new LinkOutSuggestion().setDestinationName("Google Assistant").setUrl(linkoutSuggestions));
+            } else {
+                resp.add("Welcome Back,  What way to play Music?")
+                        .addSuggestions(new String[]{"Typing", "Options", "Genre"})
+                        .add(new LinkOutSuggestion().setDestinationName("Google Assistant").setUrl(linkoutSuggestions));
+            }
+
             globalEntity.setUserFlag(false);
         }
         return resp.build();
@@ -59,27 +70,50 @@ public class MusicServiceimpl implements MusicService {
 
     @Override
     public ActionResponse typeToPlay(ActionRequest req, GlobalEntity gbEntity) {
-        ResponseBuilder resp = new ResponseBuilder();
+        LOGGER.info("one Flag: {}", gbEntity.getPaginationOneFlag());
+        LOGGER.info("two Flag: {}", gbEntity.getPaginationTwoFlag());
+        LOGGER.info("three Flag: {}", gbEntity.getPaginationThreeFlag());
         LOGGER.info("Raw Text: {}", req.getRawText());
         LOGGER.info("status: {}", req.getParameter("optionFlag"));
+        ResponseBuilder resp = new ResponseBuilder();
         ResourceBundle rd = ResourceBundle.getBundle("resources");
+        LOGGER.info(": {}",Boolean.TRUE.equals(gbEntity.getOptionFlag()) && Boolean.TRUE.equals(globalEntity.getArtistNameFlag()));
+        LOGGER.info(": {}",gbEntity.getPaginationOneFlag());
+        LOGGER.info(": {}",Objects.equals(req.getParameter("optionFlag"),"options"));
         if (Objects.equals(req.getParameter("optionFlag"), "typing") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
             resp.add(rd.getString("typeToPlay"));
-        } else if (Objects.equals(req.getParameter("optionFlag"), "options") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
-            if (globalEntity.getPaginationOneFlag()) {
-                resp.add("Hello " + globalEntity.getUserName() + ", What Music Artist you want to listen?")
+        }
+        else if (Boolean.TRUE.equals(gbEntity.getOptionFlag()) && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
+            if (gbEntity.getPaginationOneFlag()) {
+                LOGGER.info("one Flag: {}", gbEntity.getPaginationOneFlag());
+                String exampleSsml;
+                LOGGER.info("repeat Flag: {}", gbEntity.getRepeatFlag());
+                if (globalEntity.getUserName() != null) {
+                    exampleSsml = generalFunctions.convertSSMLSpeech(rd.getString("firstResponse"),0.5, globalEntity.getUserName());
+                } else {
+                    exampleSsml = generalFunctions.convertSSMLSpeech(rd.getString("repeatArtist"));
+                }
+                SimpleResponse ssmlResp = new SimpleResponse().setSsml(exampleSsml);
+                resp.add(ssmlResp)
                         .addSuggestions(new String[]{"Arijit sigh", "Martin Garrix", "Imagine Dragons", "Next"})
                         .add(new LinkOutSuggestion().setDestinationName("Artist Name").setUrl(linkoutSuggestions));
-            } else if (globalEntity.getPaginationTwoFlag()) {
-                resp.add("Hello " + globalEntity.getUserName() + ", What Music Artist you want to listen?")
+            } else if (gbEntity.getPaginationTwoFlag()) {
+                LOGGER.info("two Flag: {}", gbEntity.getPaginationTwoFlag());
+                String exampleSsml = generalFunctions.convertSSMLSpeech(rd.getString("secondResponse"));
+                SimpleResponse ssmlResp = new SimpleResponse().setSsml(exampleSsml);
+                resp.add(ssmlResp)
                         .addSuggestions(new String[]{"Glass Animals", "KK", "Lucky Ali", "Next"})
                         .add(new LinkOutSuggestion().setDestinationName("Artist Name").setUrl(linkoutSuggestions));
-            } else if (globalEntity.getPaginationThreeFlag()) {
-                resp.add("Hello " + globalEntity.getUserName() + ", What Music Artist you want to listen?")
+            } else if (gbEntity.getPaginationThreeFlag()) {
+                LOGGER.info("three Flag: {}", gbEntity.getPaginationThreeFlag());
+                String exampleSsml = generalFunctions.convertSSMLSpeech(rd.getString("thirdResponse"));
+                SimpleResponse ssmlResp = new SimpleResponse().setSsml(exampleSsml);
+                resp.add(ssmlResp)
                         .addSuggestions(new String[]{"Ranbir Kapor", "Arjun Rampal"})
                         .add(new LinkOutSuggestion().setDestinationName("Artist Name").setUrl(linkoutSuggestions));
             }
-        } else if (Objects.equals(req.getParameter("optionFlag"), "Genere") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
+        }
+        else if (Objects.equals(req.getParameter("optionFlag"), "Genere") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
             globalEntity.setPlayGenereFlag(true);
             resp.add("Hello " + globalEntity.getUserName() + ", What Music Genre you want to listen?")
                     .addSuggestions(new String[]{"pop", "rock", "romantic", "random"})
@@ -151,7 +185,7 @@ public class MusicServiceimpl implements MusicService {
                 "Imagine Dragons", imgUrl, "Imagine Dragons"));
         LOGGER.info("option flag : {}", req.getParameter("songGenere"));
         ResponseBuilder resp = new ResponseBuilder();
-        LOGGER.info("play songs : {}", req.getParameter("artistName"));
+        LOGGER.info("play songs artist : {}", req.getParameter("artistName"));
         LOGGER.info("play song : {}", req.getAppRequest());
         if (globalEntity.getPlayGenereFlag()) {
             if (Objects.equals(req.getParameter("songGenere"), "pop")) {
@@ -175,6 +209,14 @@ public class MusicServiceimpl implements MusicService {
                 resp = generalFunctions.playMedia(req, artist.get(2));
             } else if (Objects.equals(req.getParameter("artistName"), "Glass Animals")) {
                 resp = generalFunctions.playMedia(req, artist.get(3));
+            } else if (Objects.equals(req.getParameter("artistName"), "KK")) {
+                resp = generalFunctions.playMedia(req, artist.get(4));
+            } else if (Objects.equals(req.getParameter("artistName"), "Lucky Ali")) {
+                resp = generalFunctions.playMedia(req, artist.get(5));
+            } else if (Objects.equals(req.getParameter("artistName"), "Ranbir Kapor")) {
+                resp = generalFunctions.playMedia(req, artist.get(6));
+            } else if (Objects.equals(req.getParameter("artistName"), "Arjun Rampal")) {
+                resp = generalFunctions.playMedia(req, artist.get(7));
             }
         }
         return resp.build();
@@ -183,6 +225,7 @@ public class MusicServiceimpl implements MusicService {
     @Override
     public ActionResponse mediaStatus(ActionRequest req) {
         ResponseBuilder resp = new ResponseBuilder();
+        ResourceBundle rd  = ResourceBundle.getBundle("messages");
         LOGGER.info("play songs : {}", req.getParameter("artistName"));
         LOGGER.info("option flag : {}", globalEntity.getOptionFlag());
         LOGGER.info("artist flag : {}", globalEntity.getArtistNameFlag());
@@ -200,7 +243,7 @@ public class MusicServiceimpl implements MusicService {
                 if (globalEntity.getPlayGenereFlag()) {
                     globalEntity.setPlayGenereFlag(false);
                 }
-                resp.add("Song has been completed say next to continue.")
+                resp.add(rd.getString("songComplete"))
                         .addSuggestions(new String[]{"Next"})
                         .add(new LinkOutSuggestion().setDestinationName("Artist Name").setUrl(linkoutSuggestions));
             } else if (mediaStatus != null && mediaStatus.equals("FAILED")) {
@@ -226,20 +269,31 @@ public class MusicServiceimpl implements MusicService {
         return resp.build();
     }
 
-
     @Override
-    public ActionResponse yesResponse(ActionRequest req) {
+    public ActionResponse noResponse(ActionRequest req) {
         ResponseBuilder resp = new ResponseBuilder();
-        ResourceBundle rd = ResourceBundle.getBundle("resources");
-        resp.add(rd.getString("yesResponse")).endConversation();
+        ResourceBundle rd = ResourceBundle.getBundle("messages");
+        resp.add(rd.getString("noNextResponse")).addSuggestions(new String[]{"Yes", "No"})
+                .add(
+                        new LinkOutSuggestion()
+                                .setDestinationName("Artist Name")
+                                .setUrl(linkoutSuggestions));
         return resp.build();
     }
 
     @Override
-    public ActionResponse noResponse(ActionRequest req) {
+    public ActionResponse yesReviewResponse(ActionRequest req) {
         ResponseBuilder resp = new ResponseBuilder();
-        ResourceBundle rd = ResourceBundle.getBundle("resources");
-        resp.add(rd.getString("noResponse")).endConversation();
+        ResourceBundle rd = ResourceBundle.getBundle("messages");
+        resp.add(rd.getString("yesReviewResponse")).endConversation();
+        return resp.build();
+    }
+
+    @Override
+    public ActionResponse noReviewResponse(ActionRequest req) {
+        ResponseBuilder resp = new ResponseBuilder();
+        ResourceBundle rd = ResourceBundle.getBundle("messages");
+        resp.add(rd.getString("noReviewResponse")).endConversation();
         return resp.build();
     }
 
@@ -257,7 +311,12 @@ public class MusicServiceimpl implements MusicService {
         Boolean artistNameFlag = globalEntity.getArtistNameFlag();
 
         LOGGER.info("selectdway : {}", globalEntity.getSelectedWay());
-        if (globalEntity.getSelectedWay()) {
+        if (globalEntity.getUserFlag()) {
+            /**
+             * If user name
+             */
+            resp.add(rb.getString("notFoundName"));
+        } else if (globalEntity.getSelectedWay()) {
             /**
              * If user type other name
              */
