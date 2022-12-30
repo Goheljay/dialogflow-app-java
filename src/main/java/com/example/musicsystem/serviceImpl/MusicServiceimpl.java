@@ -73,13 +73,14 @@ public class MusicServiceimpl implements MusicService {
         LOGGER.info("one Flag: {}", gbEntity.getPaginationOneFlag());
         LOGGER.info("two Flag: {}", gbEntity.getPaginationTwoFlag());
         LOGGER.info("three Flag: {}", gbEntity.getPaginationThreeFlag());
-        LOGGER.info("Raw Text: {}", req.getRawText());
-        LOGGER.info("status: {}", req.getParameter("optionFlag"));
+        LOGGER.info("options Flag in serviceImpl: {}", req.getParameter("optionFlag"));
         ResponseBuilder resp = new ResponseBuilder();
         ResourceBundle rd = ResourceBundle.getBundle("resources");
-        LOGGER.info(": {}",Boolean.TRUE.equals(gbEntity.getOptionFlag()) && Boolean.TRUE.equals(globalEntity.getArtistNameFlag()));
+        LOGGER.info("options flag Entity: {}",Boolean.TRUE.equals(gbEntity.getOptionFlag()));
+        LOGGER.info(": {}",Boolean.TRUE.equals(Boolean.TRUE.equals(globalEntity.getArtistNameFlag())));
         LOGGER.info(": {}",gbEntity.getPaginationOneFlag());
         LOGGER.info(": {}",Objects.equals(req.getParameter("optionFlag"),"options"));
+        LOGGER.info("option flag :{} ", Boolean.TRUE.equals(gbEntity.getFallbackTypingFlag()));
         if (Objects.equals(req.getParameter("optionFlag"), "typing") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
             resp.add(rd.getString("typeToPlay"));
         }
@@ -114,10 +115,18 @@ public class MusicServiceimpl implements MusicService {
             }
         }
         else if (Objects.equals(req.getParameter("optionFlag"), "Genere") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
+            LOGGER.info("genere from service");
             globalEntity.setPlayGenereFlag(true);
-            resp.add("Hello " + globalEntity.getUserName() + ", What Music Genre you want to listen?")
+            String exampleSsml;
+            if (globalEntity.getUserName() != null) {
+                exampleSsml = generalFunctions.convertSSMLSpeech(rd.getString("genereResponse"),0.5, globalEntity.getUserName());
+            } else {
+                exampleSsml = generalFunctions.convertSSMLSpeech(rd.getString("repeatGenereResponse"));
+            }
+            SimpleResponse ssmlResp = new SimpleResponse().setSsml(exampleSsml);
+            resp.add(ssmlResp)
                     .addSuggestions(new String[]{"pop", "rock", "romantic", "random"})
-                    .add(new LinkOutSuggestion().setDestinationName("Genere").setUrl(linkoutSuggestions));
+                    .add(new LinkOutSuggestion().setDestinationName("Genere Name").setUrl(linkoutSuggestions));
         }
         globalEntity.setSelectedWay(false);
         return resp.build();
@@ -191,7 +200,6 @@ public class MusicServiceimpl implements MusicService {
             if (Objects.equals(req.getParameter("songGenere"), "pop")) {
                 resp = generalFunctions.playMediaGenere(req, pops);
             } else if (Objects.equals(req.getParameter("songGenere"), "random")) {
-                LOGGER.info("song genere : {}", req.getParameter("songGenere"));
                 resp = generalFunctions.playMediaGenere(req, randoms);
             } else if (Objects.equals(req.getParameter("songGenere"), "rock")) {
                 resp = generalFunctions.playMediaGenere(req, rocks);

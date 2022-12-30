@@ -25,15 +25,12 @@ public class utils {
         return num;
     }
     public ResponseBuilder playMediaGenere(ActionRequest req,  List<MusicEntity> entities) {
-        LOGGER.info("song genere : {}", req.getParameter("songGenere"));
-        LOGGER.info("song genere : {}", req.getParameter("songGenere"));
         int num = randomNumberGenerator(1, entities.size());
-        LOGGER.info("song genere : {}", num);
         ResponseBuilder resp = new ResponseBuilder();
         entities.forEach(entity -> {
             if (entity.getId() == num) {
                 LOGGER.info("song genere : {}", entity);
-                resp.add("Playing " + req.getParameter("songGenere") + " Genere");
+                resp.add("Playing " + entity.getArtist_name() + " Song");
                 resp.addSuggestions(new String[]{"Okay", "Cancel", "Next"});
                 resp.add(
                         new MediaResponse()

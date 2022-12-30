@@ -5,6 +5,7 @@ import com.example.musicsystem.service.MusicService;
 import com.example.musicsystem.serviceImpl.MusicServiceimpl;
 import com.google.actions.api.*;
 import com.google.gson.Gson;
+import com.sun.corba.se.spi.ior.IdentifiableFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +45,12 @@ public class MusicApplication extends DialogflowApp {
         LOGGER.info("type to play intent start");
         LOGGER.info("Request : {}", new Gson().toJson(req));
         LOGGER.info("Option flag : {}", req.getParameter("optionFlag"));
-        globalEntity.setPaginationOneFlag(true);
+        if (Boolean.TRUE.equals(globalEntity.getFallbackTypingFlag())) {
+            globalEntity.setOptionFlag(true);
+        }
         if (Objects.equals(req.getParameter("optionFlag"), "options")) {
             globalEntity.setOptionFlag(true);
+            globalEntity.setPaginationOneFlag(true);
         }
         ActionResponse resp = musicService.typeToPlay(req, globalEntity);
         LOGGER.info("Response : {}", new Gson().toJson(resp));
@@ -136,7 +140,14 @@ public class MusicApplication extends DialogflowApp {
     public ActionResponse fallbackIntentHandler(ActionRequest req) {
         LOGGER.info("Request : {}", new Gson().toJson(req));
         LOGGER.info("fallback intent handler start");
-        ActionResponse resp = musicService.fallBack(req);
+        LOGGER.info("OPtion flag : {}", Objects.equals(req.getParameter("optionFlag"), "options"));
+        ActionResponse resp;
+        if (Objects.equals(req.getParameter("optionFlag"), "typing")) {
+            resp = this.typeToPlay(req);
+            globalEntity.setFallbackTypingFlag(true);
+        } else {
+            resp = musicService.fallBack(req);
+        }
         LOGGER.info("Response : {}", new Gson().toJson(resp));
         LOGGER.info("fallback intent handler end");
         return resp;

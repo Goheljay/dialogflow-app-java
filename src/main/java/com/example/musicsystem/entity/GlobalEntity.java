@@ -14,6 +14,16 @@ public class GlobalEntity {
     private Boolean paginationThreeFlag = false;
     private Boolean repeatFlag = false;
 
+    private Boolean fallbackTypingFlag = false;
+
+    public Boolean getFallbackTypingFlag() {
+        return fallbackTypingFlag;
+    }
+
+    public void setFallbackTypingFlag(Boolean fallbackTypingFlag) {
+        this.fallbackTypingFlag = fallbackTypingFlag;
+    }
+
     public Boolean getRepeatFlag() {
         return repeatFlag;
     }
