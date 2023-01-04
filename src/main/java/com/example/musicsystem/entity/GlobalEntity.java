@@ -112,6 +112,23 @@ public class GlobalEntity {
         this.selectedWay = selectedWay;
     }
 
+    @Override
+    public String toString() {
+        return "GlobalEntity{" +
+                "userName='" + userName + '\'' +
+                ", userFlag=" + userFlag +
+                ", artistNameFlag=" + artistNameFlag +
+                ", playGenereFlag=" + playGenereFlag +
+                ", selectedWay=" + selectedWay +
+                ", optionFlag=" + optionFlag +
+                ", paginationOneFlag=" + paginationOneFlag +
+                ", paginationTwoFlag=" + paginationTwoFlag +
+                ", paginationThreeFlag=" + paginationThreeFlag +
+                ", repeatFlag=" + repeatFlag +
+                ", fallbackTypingFlag=" + fallbackTypingFlag +
+                '}';
+    }
+
     public GlobalEntity() {
     }
 }

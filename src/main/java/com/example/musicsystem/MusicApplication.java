@@ -5,7 +5,6 @@ import com.example.musicsystem.service.MusicService;
 import com.example.musicsystem.serviceImpl.MusicServiceimpl;
 import com.google.actions.api.*;
 import com.google.gson.Gson;
-import com.sun.corba.se.spi.ior.IdentifiableFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +104,7 @@ public class MusicApplication extends DialogflowApp {
         LOGGER.info("Play song resp yes");
         LOGGER.info("Request : {}", new Gson().toJson(req));
         globalEntity.setUserFlag(true);
-        ActionResponse resp = musicService.askName(req, globalEntity);
+        ActionResponse resp = this.askName(req);
         LOGGER.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }

@@ -1,21 +1,27 @@
 package com.example.musicsystem.serviceImpl;
 
 import com.example.musicsystem.MusicApplication;
+import com.example.musicsystem.entity.ApiResponse;
 import com.example.musicsystem.entity.ArtistEntity;
 import com.example.musicsystem.entity.GlobalEntity;
 import com.example.musicsystem.entity.MusicEntity;
+import com.example.musicsystem.repositary.MusicRepo;
 import com.example.musicsystem.service.MusicService;
 import com.example.musicsystem.utils.utils;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.actions.api.ActionRequest;
 import com.google.actions.api.ActionResponse;
 import com.google.actions.api.Capability;
 import com.google.actions.api.response.ResponseBuilder;
 import com.google.api.services.actions_fulfillment.v2.model.*;
-import com.google.gson.internal.LinkedTreeMap;
-import org.omg.CORBA.Object;
+import com.google.gson.Gson;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.*;
 
 public class MusicServiceimpl implements MusicService {
@@ -62,7 +68,7 @@ public class MusicServiceimpl implements MusicService {
                         .addSuggestions(new String[]{"Typing", "Options", "Genre"})
                         .add(new LinkOutSuggestion().setDestinationName("Google Assistant").setUrl(linkoutSuggestions));
             }
-
+            LOGGER.info("global entity from askname : {}",globalEntity);
             globalEntity.setUserFlag(false);
         }
         return resp.build();
@@ -70,6 +76,8 @@ public class MusicServiceimpl implements MusicService {
 
     @Override
     public ActionResponse typeToPlay(ActionRequest req, GlobalEntity gbEntity) {
+        LOGGER.info("gbentity from typeToPlay : {}",gbEntity);
+        LOGGER.info("global entity from typeToPlay : {}",globalEntity);
         LOGGER.info("one Flag: {}", gbEntity.getPaginationOneFlag());
         LOGGER.info("two Flag: {}", gbEntity.getPaginationTwoFlag());
         LOGGER.info("three Flag: {}", gbEntity.getPaginationThreeFlag());
@@ -88,7 +96,6 @@ public class MusicServiceimpl implements MusicService {
             if (gbEntity.getPaginationOneFlag()) {
                 LOGGER.info("one Flag: {}", gbEntity.getPaginationOneFlag());
                 String exampleSsml;
-                LOGGER.info("repeat Flag: {}", gbEntity.getRepeatFlag());
                 if (globalEntity.getUserName() != null) {
                     exampleSsml = generalFunctions.convertSSMLSpeech(rd.getString("firstResponse"),0.5, globalEntity.getUserName());
                 } else {
@@ -134,16 +141,7 @@ public class MusicServiceimpl implements MusicService {
 
     @Override
     public ActionResponse playSong(ActionRequest req) {
-        List<ArtistEntity> artist = new ArrayList();
-        artist.add(new ArtistEntity("Arijit sigh", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Kesariya+-+Brahm%C4%81stra++Ranbir+Kapoor++Alia+Bhatt++Pritam++Arijit+Singh++Amitabh+Bhattacharya.mp3"));
-        artist.add(new ArtistEntity("MArtin Garrix", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Martin+Garrix+-+Animals+(Official+Video).mp3"));
-        artist.add(new ArtistEntity("Imagine Dragons", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Imagine+Dragons+-+Thunder.mp3"));
-        artist.add(new ArtistEntity("Glass Animals", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Imagine+Dragons+-+Thunder.mp3"));
-        artist.add(new ArtistEntity("KK", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/KK+-+Yaaron.mp3"));
-        artist.add(new ArtistEntity("Lucky Ali", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/O+Sanam+-+Sunoh++Lucky+Ali++(Official+Video).mp3"));
-        artist.add(new ArtistEntity("Ranbir Kapor", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Sadda+Haq+Full+Video+Song+Rockstar++Ranbir+Kapoor.mp3"));
-        artist.add(new ArtistEntity("Arjun Rampal", "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3"));
-        List<MusicEntity> rocks = new ArrayList<>();
+       List<MusicEntity> rocks = new ArrayList<>();
         rocks.add(new MusicEntity(1,
                 "https://demo7uyidtyietyuiet.s3.ap-south-1.amazonaws.com/Rock+On+Title+Video+Song++Arjun+Rampal%2C+Farhan+Akhtar%2C+Prachi+Desai%2C+Purab+Kohli%2C+Koel+Puri.mp3",
                 "Rock on", imgUrl, "Rock on"));
@@ -209,22 +207,46 @@ public class MusicServiceimpl implements MusicService {
         }
         if (req.getParameter("artistName") != null && (globalEntity.getArtistNameFlag() || globalEntity.getOptionFlag())) {
             if (Objects.equals(req.getParameter("artistName"), "Arijit sigh")) {
-                resp = generalFunctions.playMedia(req, artist.get(0));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
                 globalEntity.setArtistNameFlag(false);
             } else if (Objects.equals(req.getParameter("artistName"), "MArtin Garrix")) {
-                resp = generalFunctions.playMedia(req, artist.get(1));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
             } else if (Objects.equals(req.getParameter("artistName"), "Imagine Dragons")) {
-                resp = generalFunctions.playMedia(req, artist.get(2));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
             } else if (Objects.equals(req.getParameter("artistName"), "Glass Animals")) {
-                resp = generalFunctions.playMedia(req, artist.get(3));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
             } else if (Objects.equals(req.getParameter("artistName"), "KK")) {
-                resp = generalFunctions.playMedia(req, artist.get(4));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
             } else if (Objects.equals(req.getParameter("artistName"), "Lucky Ali")) {
-                resp = generalFunctions.playMedia(req, artist.get(5));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
             } else if (Objects.equals(req.getParameter("artistName"), "Ranbir Kapor")) {
-                resp = generalFunctions.playMedia(req, artist.get(6));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
             } else if (Objects.equals(req.getParameter("artistName"), "Arjun Rampal")) {
-                resp = generalFunctions.playMedia(req, artist.get(7));
+                MusicRepo repo = new MusicRepo();
+                ArtistEntity entity = repo.artistName(req);
+                System.out.println("artist = " + new Gson().toJson(entity));
+                resp = generalFunctions.playMedia(req, entity);
             }
         }
         return resp.build();
@@ -309,8 +331,9 @@ public class MusicServiceimpl implements MusicService {
     public ActionResponse fallBack(ActionRequest req) {
 
         ResponseBuilder resp = new ResponseBuilder();
-        LOGGER.info("Fallback : {}", req.getAppRequest());
-        LOGGER.info("Parameter Text: {}", req.getParameter("artistName"));
+        LOGGER.info("OptionFlagName: {}",req.getParameter("optionFlag"));
+        LOGGER.info("artistName: {}",req.getParameter("artistName"));
+        LOGGER.info("next: {}",req.getParameter("next"));
         String artistName = (String) req.getParameter("artistName");
         String songGenere = (String) req.getParameter("songGenere");
         ResourceBundle rb = ResourceBundle.getBundle("resources");

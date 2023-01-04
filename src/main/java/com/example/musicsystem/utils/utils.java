@@ -8,14 +8,20 @@ import com.google.actions.api.response.ResponseBuilder;
 import com.google.api.services.actions_fulfillment.v2.model.Image;
 import com.google.api.services.actions_fulfillment.v2.model.MediaObject;
 import com.google.api.services.actions_fulfillment.v2.model.MediaResponse;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 public class utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicApplication.class);
+    OkHttpClient client = new OkHttpClient();
+
     String imgUrl = "https://storage.googleapis.com/automotive-media/album_art.jpg";
     public int randomNumberGenerator(int min, int max) {
         int num = (int) (Math.random() * (1 - (max == 0 ? min : max)));
