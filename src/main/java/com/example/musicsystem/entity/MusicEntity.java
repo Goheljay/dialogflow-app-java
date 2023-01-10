@@ -2,10 +2,10 @@ package com.example.musicsystem.entity;
 
 public class MusicEntity {
     private int id;
-    private String audio_link;
-    private String song_name;
-    private String album_art_link;
-    private String artist_name;
+    private String audioLink;
+    private String songName;
+    private String albumArtLink;
+    private String artistName;
 
     public int getId() {
         return id;
@@ -15,43 +15,46 @@ public class MusicEntity {
         this.id = id;
     }
 
-    public String getAudio_link() {
-        return audio_link;
+    public String getAudioLink() {
+        return audioLink;
     }
 
-    public void setAudio_link(String audio_link) {
-        this.audio_link = audio_link;
+    public void setAudioLink(String audioLink) {
+        this.audioLink = audioLink;
     }
 
-    public String getSong_name() {
-        return song_name;
+    public String getSongName() {
+        return songName;
     }
 
-    public void setSong_name(String song_name) {
-        this.song_name = song_name;
+    public void setSongName(String songName) {
+        this.songName = songName;
     }
 
-    public String getAlbum_art_link() {
-        return album_art_link;
+    public String getAlbumArtLink() {
+        return albumArtLink;
     }
 
-    public void setAlbum_art_link(String album_art_link) {
-        this.album_art_link = album_art_link;
+    public void setAlbumArtLink(String albumArtLink) {
+        this.albumArtLink = albumArtLink;
     }
 
-    public String getArtist_name() {
-        return artist_name;
+    public String getArtistName() {
+        return artistName;
     }
 
-    public void setArtist_name(String artist_name) {
-        this.artist_name = artist_name;
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 
     public MusicEntity(int id, String audio_link, String song_name, String album_art_link, String artist_name) {
         this.id = id;
-        this.audio_link = audio_link;
-        this.song_name = song_name;
-        this.album_art_link = album_art_link;
-        this.artist_name = artist_name;
+        this.audioLink = audio_link;
+        this.songName = song_name;
+        this.albumArtLink = album_art_link;
+        this.artistName = artist_name;
+    }
+
+    public MusicEntity() {
     }
 }

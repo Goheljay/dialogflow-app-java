@@ -1,13 +1,11 @@
-package com.example.musicsystem.entity;
-
-import org.apache.http.HttpStatus;
+package com.example.musicsystem.responseDto;
 
 public class ApiResponse {
     private Object data;
 
     private String massage;
 
-    private HttpStatus code;
+    private String code;
 
     public Object getData() {
         return data;
@@ -25,11 +23,20 @@ public class ApiResponse {
         this.massage = massage;
     }
 
-    public HttpStatus getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(HttpStatus code) {
+    public void setCode(String code) {
         this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return "ApiResponse{" +
+                "data=" + data +
+                ", massage='" + massage + '\'' +
+                ", code='" + code + '\'' +
+                '}';
     }
 }

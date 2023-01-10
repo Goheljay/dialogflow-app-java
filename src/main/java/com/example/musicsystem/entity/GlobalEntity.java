@@ -4,6 +4,8 @@ package com.example.musicsystem.entity;
 public class GlobalEntity {
 
     private String userName;
+
+    private  String conversionId;
     private Boolean userFlag = false;
     private Boolean artistNameFlag = false;
     private Boolean playGenereFlag = false;
@@ -15,6 +17,14 @@ public class GlobalEntity {
     private Boolean repeatFlag = false;
 
     private Boolean fallbackTypingFlag = false;
+
+    public String getConversionId() {
+        return conversionId;
+    }
+
+    public void setConversionId(String conversionId) {
+        this.conversionId = conversionId;
+    }
 
     public Boolean getFallbackTypingFlag() {
         return fallbackTypingFlag;
@@ -104,18 +114,26 @@ public class GlobalEntity {
         this.artistNameFlag = artistNameFlag;
     }
 
-    public GlobalEntity(String userName, Boolean userFlag, Boolean artistNameFlag, Boolean playGenereFlag, Boolean selectedWay) {
+    public GlobalEntity(String userName, String conversionId, Boolean userFlag, Boolean artistNameFlag, Boolean playGenereFlag, Boolean selectedWay, Boolean optionFlag, Boolean paginationOneFlag, Boolean paginationTwoFlag, Boolean paginationThreeFlag, Boolean repeatFlag, Boolean fallbackTypingFlag) {
         this.userName = userName;
+        this.conversionId = conversionId;
         this.userFlag = userFlag;
         this.artistNameFlag = artistNameFlag;
         this.playGenereFlag = playGenereFlag;
         this.selectedWay = selectedWay;
+        this.optionFlag = optionFlag;
+        this.paginationOneFlag = paginationOneFlag;
+        this.paginationTwoFlag = paginationTwoFlag;
+        this.paginationThreeFlag = paginationThreeFlag;
+        this.repeatFlag = repeatFlag;
+        this.fallbackTypingFlag = fallbackTypingFlag;
     }
 
     @Override
     public String toString() {
         return "GlobalEntity{" +
                 "userName='" + userName + '\'' +
+                ", conversionId='" + conversionId + '\'' +
                 ", userFlag=" + userFlag +
                 ", artistNameFlag=" + artistNameFlag +
                 ", playGenereFlag=" + playGenereFlag +

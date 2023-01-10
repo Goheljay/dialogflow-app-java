@@ -18,32 +18,32 @@ import java.util.Objects;
 
 public class MusicApplication extends DialogflowApp {
     GlobalEntity globalEntity = new GlobalEntity();
-    private static final Logger LOGGER = LoggerFactory.getLogger(MusicApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(MusicApplication.class);
 
     private static final MusicService musicService = new MusicServiceimpl();
     @ForIntent("Default Welcome Intent")
     public ActionResponse welcome(ActionRequest req) {
-        LOGGER.info("welcome intent start");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("welcome intent start");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.welcome(req);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
 
     @ForIntent("User Name")
     public ActionResponse askName(ActionRequest req) {
-        LOGGER.info("welcome name intent start");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("welcome name intent start");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.askName(req, globalEntity);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
 
     @ForIntent("play song way")
     public ActionResponse typeToPlay(ActionRequest req) {
-        LOGGER.info("type to play intent start");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
-        LOGGER.info("Option flag : {}", req.getParameter("optionFlag"));
+        logger.info("type to play intent start");
+        logger.info("Request : {}", new Gson().toJson(req));
+        logger.info("Option flag : {}", req.getParameter("optionFlag"));
         if (Boolean.TRUE.equals(globalEntity.getFallbackTypingFlag())) {
             globalEntity.setOptionFlag(true);
         }
@@ -52,14 +52,14 @@ public class MusicApplication extends DialogflowApp {
             globalEntity.setPaginationOneFlag(true);
         }
         ActionResponse resp = musicService.typeToPlay(req, globalEntity);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
     @ForIntent("play song second")
     public ActionResponse playSecondSong(ActionRequest req) {
-        LOGGER.info("play second song intent start");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
-        LOGGER.info("Request : {}", req.getParameter("given-name"));
+        logger.info("play second song intent start");
+        logger.info("Request : {}", new Gson().toJson(req));
+        logger.info("Request : {}", req.getParameter("given-name"));
        if (globalEntity.getPaginationOneFlag()){
             globalEntity.setPaginationTwoFlag(true);
             globalEntity.setPaginationOneFlag(false);
@@ -70,76 +70,76 @@ public class MusicApplication extends DialogflowApp {
             globalEntity.setPaginationTwoFlag(false);
         }
         ActionResponse resp = musicService.typeToPlay(req,globalEntity);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
 
     @ForIntent("Play Song")
     public  ActionResponse playSong(ActionRequest req) {
-        LOGGER.info("welcome Song Start");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("welcome Song Start");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.playSong(req);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
 
     @ForIntent("Media Status")
     public ActionResponse mediaStatus(ActionRequest req) {
-        LOGGER.info("Play Status");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("Play Status");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.mediaStatus(req);
         return resp;
     }
 
     @ForIntent("Media Status Next")
     public ActionResponse mediaStatusNext(ActionRequest req) {
-        LOGGER.info("Media Status Next");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("Media Status Next");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.mediaStatusNext(req);
         return resp;
     }
 
     @ForIntent("Play song resp yes")
     public ActionResponse yes(ActionRequest req) {
-        LOGGER.info("Play song resp yes");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("Play song resp yes");
+        logger.info("Request : {}", new Gson().toJson(req));
         globalEntity.setUserFlag(true);
         ActionResponse resp = this.askName(req);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
 
     @ForIntent("Play song resp no")
     public ActionResponse no(ActionRequest req) {
-        LOGGER.info("Play song resp no");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("Play song resp no");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.noResponse(req);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
 
     @ForIntent("User Review yes")
     public ActionResponse userReviewYes(ActionRequest req) {
-        LOGGER.info("User review yes");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("User review yes");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.yesReviewResponse(req);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
     @ForIntent("User Review no")
     public ActionResponse userReviewNo(ActionRequest req) {
-        LOGGER.info("User Review no");
-        LOGGER.info("Request : {}", new Gson().toJson(req));
+        logger.info("User Review no");
+        logger.info("Request : {}", new Gson().toJson(req));
         ActionResponse resp = musicService.noReviewResponse(req);
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
+        logger.info("Response : {}", new Gson().toJson(resp));
         return resp;
     }
 
     @ForIntent("Default Fallback Intent")
     public ActionResponse fallbackIntentHandler(ActionRequest req) {
-        LOGGER.info("Request : {}", new Gson().toJson(req));
-        LOGGER.info("fallback intent handler start");
-        LOGGER.info("OPtion flag : {}", Objects.equals(req.getParameter("optionFlag"), "options"));
+        logger.info("Request : {}", new Gson().toJson(req));
+        logger.info("fallback intent handler start");
+        logger.info("OPtion flag : {}", Objects.equals(req.getParameter("optionFlag"), "options"));
         ActionResponse resp;
         if (Objects.equals(req.getParameter("optionFlag"), "typing")) {
             resp = this.typeToPlay(req);
@@ -147,8 +147,8 @@ public class MusicApplication extends DialogflowApp {
         } else {
             resp = musicService.fallBack(req);
         }
-        LOGGER.info("Response : {}", new Gson().toJson(resp));
-        LOGGER.info("fallback intent handler end");
+        logger.info("Response : {}", new Gson().toJson(resp));
+        logger.info("fallback intent handler end");
         return resp;
     }
 
