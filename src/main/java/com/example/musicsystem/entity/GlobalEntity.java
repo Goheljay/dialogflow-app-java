@@ -6,6 +6,8 @@ public class GlobalEntity {
     private String userName;
 
     private  String conversionId;
+
+    private  String artistName;
     private Boolean userFlag = false;
     private Boolean artistNameFlag = false;
     private Boolean playGenereFlag = false;
@@ -15,6 +17,14 @@ public class GlobalEntity {
     private Boolean paginationTwoFlag = false;
     private Boolean paginationThreeFlag = false;
     private Boolean repeatFlag = false;
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
 
     private Boolean fallbackTypingFlag = false;
 

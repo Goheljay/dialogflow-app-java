@@ -157,4 +157,28 @@ public class Utils {
         }
         return apiResp;
     }
+
+    public ApiResponse favoriteApi(RequestBody body, String uri) {
+        ApiResponse apiResp = new ApiResponse();
+        try {
+            OkHttpClient client = new OkHttpClient();
+            Request apiRequest = new Request.Builder().url(uri).post(body).addHeader("content-type", "application/json").addHeader("cache-control", "no-cache").build();
+            Response response = client.newCall(apiRequest).execute();
+            String data = response.body().string();
+            LOGGER.info("data: " + data);
+            JSONObject getJson = new JSONObject(data);
+            LOGGER.info("json: " + new Gson().toJson(getJson));
+
+            apiResp.setData(getJson.get("data"));
+            apiResp.setMassage(getJson.get("message").toString());
+            apiResp.setCode(getJson.get("status").toString());
+
+            LOGGER.info("apiResp: " + apiResp);
+            LOGGER.info("apiResp Data: " + apiResp.getData());
+            LOGGER.info("API CALL EXECUTED");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return apiResp;
+    }
 }

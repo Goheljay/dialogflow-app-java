@@ -2,6 +2,7 @@ package com.example.musicsystem.serviceImpl;
 
 import com.example.musicsystem.MusicApplication;
 import com.example.musicsystem.entity.ArtistEntity;
+import com.example.musicsystem.entity.FavoriteEntity;
 import com.example.musicsystem.entity.GlobalEntity;
 import com.example.musicsystem.entity.MusicEntity;
 import com.example.musicsystem.repositary.MusicRepo;
@@ -70,8 +71,8 @@ public class MusicServiceimpl implements MusicService {
         }
         LOGGER.info("person :{} ",globalEntity.getUserFlag());
         LOGGER.info("Person : {}", req.getParameter("given-name"));
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        globalEntity.setUserName(req.getParameter("given-name").toString());
+        musicRepo.sessionResponse(req, globalEntity, false);
         if (globalEntity.getUserFlag() || entity.getUserFlag()) {
             globalEntity.setSelectedWay(true);
             LOGGER.info("Person : {}", req.getRawText());
@@ -108,8 +109,7 @@ public class MusicServiceimpl implements MusicService {
         LOGGER.info(": {}",Objects.equals(req.getParameter("optionFlag"),"options"));
         LOGGER.info("option flag :{} ", Boolean.TRUE.equals(gbEntity.getFallbackTypingFlag()));
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        musicRepo.sessionResponse(req, globalEntity, false);
         if (Objects.equals(req.getParameter("optionFlag"), "typing") && Boolean.TRUE.equals(globalEntity.getArtistNameFlag())) {
             resp.add(rd.getString("typeToPlay"));
         }
@@ -166,9 +166,9 @@ public class MusicServiceimpl implements MusicService {
         ResponseBuilder resp = new ResponseBuilder();
         LOGGER.info("play songs artist : {}", req.getParameter("artistName"));
         LOGGER.info("play song : {}", req.getAppRequest());
+        globalEntity.setArtistName(req.getParameter("artistName").toString());
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        musicRepo.sessionResponse(req, globalEntity, false);
         if (globalEntity.getPlayGenereFlag()) {
             if (Objects.equals(req.getParameter("songGenere"), "pop")) {
                 MusicRepo repo = new MusicRepo();
@@ -247,8 +247,7 @@ public class MusicServiceimpl implements MusicService {
         LOGGER.info("option flag : {}", globalEntity.getOptionFlag());
         LOGGER.info("artist flag : {}", globalEntity.getArtistNameFlag());
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        musicRepo.sessionResponse(req, globalEntity, false);
         if (Boolean.TRUE.equals(globalEntity.getArtistNameFlag() || globalEntity.getOptionFlag() || globalEntity.getPlayGenereFlag())) {
             LOGGER.info("Media Status: {}", req.getMediaStatus());
             String mediaStatus = req.getMediaStatus();
@@ -281,8 +280,7 @@ public class MusicServiceimpl implements MusicService {
         ResponseBuilder resp = new ResponseBuilder();
         ResourceBundle rd = ResourceBundle.getBundle("resources");
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        musicRepo.sessionResponse(req, globalEntity, false);
         resp.add(rd.getString("nextResponse")).addSuggestions(new String[]{"Yes", "No"})
                 .add(
                         new LinkOutSuggestion()
@@ -296,8 +294,7 @@ public class MusicServiceimpl implements MusicService {
         ResponseBuilder resp = new ResponseBuilder();
         ResourceBundle rd = ResourceBundle.getBundle("messages");
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        musicRepo.sessionResponse(req, globalEntity, false);
         resp.add(rd.getString("noNextResponse")).addSuggestions(new String[]{"Yes", "No"})
                 .add(
                         new LinkOutSuggestion()
@@ -309,10 +306,14 @@ public class MusicServiceimpl implements MusicService {
     @Override
     public ActionResponse yesReviewResponse(ActionRequest req) {
         ResponseBuilder resp = new ResponseBuilder();
+        LOGGER.info("artist Name : {}",req.getParameter("artistName"));
+        LOGGER.info("artist Name : {}",req.getParameter("given-name"));
         ResourceBundle rd = ResourceBundle.getBundle("messages");
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        SessionDto sessionDto = musicRepo.sessionResponse(req, globalEntity, false);
+        LOGGER.info("sessionDto : {}", sessionDto);
+        FavoriteEntity favoriteEntity = musicRepo.favoriteResp(sessionDto, globalEntity);
+        LOGGER.info("favoriteEntity : {}", new Gson().toJson(favoriteEntity));
         resp.add(rd.getString("yesReviewResponse")).endConversation();
         return resp.build();
     }
@@ -322,8 +323,7 @@ public class MusicServiceimpl implements MusicService {
         ResponseBuilder resp = new ResponseBuilder();
         ResourceBundle rd = ResourceBundle.getBundle("messages");
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, false,sessionResponse);
+        musicRepo.sessionResponse(req, globalEntity, false);
         resp.add(rd.getString("noReviewResponse")).endConversation();
         return resp.build();
     }
@@ -342,8 +342,7 @@ public class MusicServiceimpl implements MusicService {
         String[] songGeneres = {"pop", "rock", "romantic", "random"};
         Boolean artistNameFlag = globalEntity.getArtistNameFlag();
         MusicRepo musicRepo = new MusicRepo();
-        SessionDto sessionResponse = musicRepo.getSessionResponse(globalEntity.getConversionId());
-        musicRepo.updateSessionResponse(req, globalEntity, true,sessionResponse);
+        musicRepo.sessionResponse(req, globalEntity, true);
         LOGGER.info("selectdway : {}", globalEntity.getSelectedWay());
         if (globalEntity.getUserFlag()) {
             /**

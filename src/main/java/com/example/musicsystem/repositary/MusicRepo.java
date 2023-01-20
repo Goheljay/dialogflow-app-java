@@ -1,6 +1,7 @@
 package com.example.musicsystem.repositary;
 
 import com.example.musicsystem.MusicApplication;
+import com.example.musicsystem.entity.FavoriteEntity;
 import com.example.musicsystem.entity.GlobalEntity;
 import com.example.musicsystem.requestDto.SessionDto;
 import com.example.musicsystem.responseDto.ApiResponse;
@@ -88,7 +89,7 @@ public class MusicRepo {
         session.setConversionId(globalEntity.getConversionId());
         session.setIntentRequest(appReq);
         session.setRequestParam(new Gson().toJson(requestParamJson));
-        session.setUserName(req.getParameter("given-name") == null? "-" : req.getParameter("given-name").toString());
+        session.setUserName(globalEntity.getUserName() == null? "-" : globalEntity.getUserName());
         session.setGlobalEntity(new Gson().toJson(globalEntityJson));
         session.setIsFallBack(isFallBack);
 
@@ -145,5 +146,22 @@ public class MusicRepo {
         logger.info("session Dto : {}", new Gson().toJson(apiResponse.getData()));
         SessionDto sessionDto = new Gson().fromJson(apiResponse.getData().toString(), SessionDto.class);
         return sessionDto;
+    }
+
+    public FavoriteEntity favoriteResp(SessionDto sessionDto, GlobalEntity entity) {
+        Utils utils = new Utils();
+        ResourceBundle rb = ResourceBundle.getBundle("url");
+        String url = rb.getString("uri")+"/songapp/addFavourite";
+        FavoriteEntity favoriteEntity = new FavoriteEntity();
+        favoriteEntity.setName(sessionDto.getUserName());
+        favoriteEntity.setConversionId(sessionDto.getConversionId());
+        favoriteEntity.setSongName(entity.getArtistName());
+        RequestBody body = RequestBody.create(
+                MediaType.parse("application/json"), new Gson().toJson(favoriteEntity));
+
+        ApiResponse apiResponse = utils.favoriteApi(body, url);
+        logger.info("session Dto : {}", new Gson().toJson(apiResponse.getData()));
+        FavoriteEntity favorite = new Gson().fromJson(apiResponse.getData().toString(), FavoriteEntity.class);
+        return favorite;
     }
 }
